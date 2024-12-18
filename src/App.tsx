@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import FileUpload from "./components/FileUpload";
 import DataTable from "./components/DataTable";
 import { TableRow } from "./types";
+import ChartSection from "./components/ChartSection";
 
 interface DayData {
   date: string;
@@ -17,53 +18,127 @@ const App: React.FC = () => {
     reader.onload = (e) => {
       const data = new Uint8Array(e.target?.result as ArrayBuffer);
       const workbook = XLSX.read(data, { type: "array" });
-
       const sheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[sheetName];
       const json = XLSX.utils.sheet_to_json<any>(worksheet);
 
-      const formattedData: TableRow[] = [1, 2, 3, 4].map((i) => ({
-        cnc: i,
-        totalParts: 0,
-        totalSeconds: 0,
-        dayParts: 0,
-        nightParts: 0,
-        daySeconds: 0,
-        nightSeconds: 0,
-      }));
+      if (json.length === 0) return;
+
+      const rawStartDate = json[0]["Start date"];
+      let extractedDate = "Unknown date";
+
+      if (typeof rawStartDate === "number") {
+        const dateObj = XLSX.SSF.parse_date_code(rawStartDate);
+        if (dateObj) {
+          const jsDate = new Date(
+            dateObj.y,
+            dateObj.m - 1,
+            dateObj.d,
+            dateObj.H,
+            dateObj.M,
+            dateObj.S
+          );
+          const year = jsDate.getFullYear();
+          const month = String(jsDate.getMonth() + 1).padStart(2, "0");
+          const day = String(jsDate.getDate()).padStart(2, "0");
+          extractedDate = `${year}-${month}-${day}`;
+        }
+      } else if (typeof rawStartDate === "string") {
+        // Expected format: "13/12/2024 12:50:13 AM"
+        const dateTimeRegex =
+          /^(\d{1,2})\/(\d{1,2})\/(\d{4}) (\d{1,2}):(\d{2}):(\d{2}) ([AP]M)$/i;
+        const match = rawStartDate.trim().match(dateTimeRegex);
+
+        if (match) {
+          const [
+            _full,
+            dayStr,
+            monthStr,
+            yearStr,
+            hourStr,
+            minuteStr,
+            secondStr,
+            amPm,
+          ] = match;
+
+          let hour = parseInt(hourStr, 10);
+          const minute = parseInt(minuteStr, 10);
+          const second = parseInt(secondStr, 10);
+          const year = parseInt(yearStr, 10);
+          const month = parseInt(monthStr, 10) - 1;
+          const day = parseInt(dayStr, 10);
+
+          const amPmUpper = amPm.toUpperCase();
+          if (amPmUpper === "PM" && hour !== 12) {
+            hour += 12;
+          } else if (amPmUpper === "AM" && hour === 12) {
+            hour = 0;
+          }
+
+          const jsDate = new Date(year, month, day, hour, minute, second);
+          const Y = jsDate.getFullYear();
+          const M = String(jsDate.getMonth() + 1).padStart(2, "0");
+          const D = String(jsDate.getDate()).padStart(2, "0");
+          extractedDate = `${Y}-${M}-${D}`;
+        }
+      }
+
+      let formattedData: TableRow[] = [];
+      for (let i = 1; i <= 4; i++) {
+        formattedData.push({
+          cnc: i,
+          shift: "Day",
+          totalParts: 0,
+          totalSeconds: 0,
+        });
+        formattedData.push({
+          cnc: i,
+          shift: "Night",
+          totalParts: 0,
+          totalSeconds: 0,
+        });
+      }
 
       for (let i = 0; i < json.length; i++) {
         const row = json[i];
         const cnc_number: number = parseInt(row["User"].match(/\d+/g)[0], 10);
         const isDay: boolean = row["User"].includes("Day");
-        formattedData[cnc_number - 1].totalParts += 1;
-        formattedData[cnc_number - 1].totalSeconds += row["Seconds"];
-        if (isDay) {
-          formattedData[cnc_number - 1].dayParts += 1;
-          formattedData[cnc_number - 1].daySeconds += row["Seconds"];
-        } else {
-          formattedData[cnc_number - 1].nightParts += 1;
-          formattedData[cnc_number - 1].nightSeconds += row["Seconds"];
+
+        const index = formattedData.findIndex(
+          (d) => d.cnc === cnc_number && d.shift === (isDay ? "Day" : "Night")
+        );
+        if (index !== -1) {
+          formattedData[index].totalParts += 1;
+          formattedData[index].totalSeconds += row["Seconds"];
         }
       }
 
-      // regex pattern for DD.MM.YYYY
-      const filename = file.name;
-      const datePattern = /^(\d{2}\.\d{2}\.\d{4})/; 
-      const match = filename.match(datePattern);
-      const date = match ? match[1] : "Unknown date";
-
-      setTableData((prev) => [...prev, { date, data: formattedData }]);
+      setTableData((prev) => [
+        ...prev,
+        { date: extractedDate, data: formattedData },
+      ]);
     };
 
     reader.readAsArrayBuffer(file);
   };
 
+  useEffect(() => {
+    const sorted = [...tableData].sort((a, b) => (a.date < b.date ? -1 : 1));
+    setTableData(sorted);
+  }, [tableData.length]); // Re-sort whenever length changes (i.e., after new file added)
+
   return (
     <div className="app-container">
       <h1>Excel File Parser</h1>
       <FileUpload onFileUpload={parseExcel} />
-      <DataTable data={tableData} />
+      <div className="content-container">
+        <div className="left-panel">
+          <DataTable data={tableData} />
+        </div>
+        <div className="right-panel">
+          <ChartSection data={tableData} />
+        </div>
+      </div>
     </div>
   );
 };

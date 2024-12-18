@@ -1,68 +1,43 @@
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background: #f8f8f8;
+  color: #333;
+}
+
 .app-container {
-  font-family: Arial, sans-serif;
-  margin: 20px;
+  padding: 20px;
 }
 
 h1 {
   text-align: center;
-}
-
-.file-upload {
-  text-align: center;
   margin-bottom: 20px;
 }
 
-.tables-container {
+.content-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.left-panel {
+  width: 50%;
+  padding-right: 20px;
+  box-sizing: border-box;
+}
+
+.right-panel {
+  width: 50%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
   align-items: center;
 }
 
-.table-wrapper {
-  margin: 20px 0;
-  width: 60%;
-}
-
-.table-wrapper h2 {
-  margin-bottom: 10px;
-}
-
-.styled-table {
-  border-collapse: collapse;
+/* Just an example if you need global spacing */
+.tables-container, .chart-container {
   width: 100%;
-  font-size: 14px;
-  text-align: left;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.styled-table thead tr {
-  background-color: #4CAF50;
-  color: #ffffff;
-  text-align: left;
-  font-weight: bold;
-}
-
-.styled-table th,
-.styled-table td {
-  padding: 12px 15px;
-  border-bottom: 1px solid #ddd;
-  position: relative;
-}
-
-.styled-table tbody tr:hover {
-  background-color: #f1f1f1;
-}
-
-.styled-table tbody tr td[title]:hover::after {
-  content: attr(title);
-  position: absolute;
-  bottom: 100%;
-  left: 10px;
-  padding: 5px;
-  font-size: 12px;
-  color: #333;
-  background: #eee;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
