@@ -129,7 +129,7 @@ const App: React.FC = () => {
 
   return (
     <div className="app-container">
-      <h1>Excel File Parser</h1>
+      <h1>CNC Excel File Parser</h1>
       <FileUpload onFileUpload={parseExcel} />
       <div className="content-container">
         <div className="left-panel">

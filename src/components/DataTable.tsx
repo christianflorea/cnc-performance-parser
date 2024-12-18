@@ -35,7 +35,7 @@ const StyledTable = styled.table`
   font-size: 14px;
 
   thead tr {
-    background-color: #4CAF50;
+    background-color: #2E282A;
     color: #ffffff;
     font-weight: bold;
   }
@@ -46,11 +46,14 @@ const StyledTable = styled.table`
   }
 
   tbody tr.day-row {
-    background-color: #e0f5e0;
+    background-color: #FFF5D6;
+    text-align: center;
   }
 
   tbody tr.night-row {
     background-color: #e0eaf5;
+    text-align: center;
+
   }
 
   tbody tr:hover {

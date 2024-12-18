@@ -102,10 +102,10 @@ const ChartSection: React.FC<ChartSectionProps> = ({ data }) => {
 
   // Colors
   const cncColors: Record<number, string> = {
-    1: "#4CAF50",
-    2: "#2196F3",
-    3: "#FFC107",
-    4: "#9C27B0"
+    1: "#94D2BD",
+    2: "#CA6702",
+    3: "#9B2226",
+    4: "#005F73"
   };
 
   const handleExport = () => {
@@ -128,6 +128,8 @@ const ChartSection: React.FC<ChartSectionProps> = ({ data }) => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
+
+  if (!chartData.length) return null;
 
   return (
     <ChartContainer className="chart-container">
