@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/cnc-performance-parser/static/css/main.87f1ad6a.css",
-    "main.js": "/cnc-performance-parser/static/js/main.c9f399e9.js",
+    "main.js": "/cnc-performance-parser/static/js/main.a97dbc86.js",
     "index.html": "/cnc-performance-parser/index.html",
     "main.87f1ad6a.css.map": "/cnc-performance-parser/static/css/main.87f1ad6a.css.map",
-    "main.c9f399e9.js.map": "/cnc-performance-parser/static/js/main.c9f399e9.js.map"
+    "main.a97dbc86.js.map": "/cnc-performance-parser/static/js/main.a97dbc86.js.map"
   },
   "entrypoints": [
     "static/css/main.87f1ad6a.css",
-    "static/js/main.c9f399e9.js"
+    "static/js/main.a97dbc86.js"
   ]
 }
