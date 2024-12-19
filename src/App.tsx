@@ -4,6 +4,7 @@ import FileUpload from "./components/FileUpload";
 import DataTable from "./components/DataTable";
 import { TableRow } from "./types";
 import ChartSection from "./components/ChartSection";
+import MinutesChartSection from "./components/MinutesChartSection";
 
 interface DayData {
   date: string;
@@ -109,7 +110,8 @@ const App: React.FC = () => {
         );
         if (index !== -1) {
           formattedData[index].totalParts += 1;
-          formattedData[index].totalSeconds += row["Seconds"];
+          const sec = row["Seconds"] < 30 * 60 ? row["Seconds"] : 180;
+          formattedData[index].totalSeconds += sec;
         }
       }
 
@@ -135,9 +137,19 @@ const App: React.FC = () => {
         <div className="left-panel">
           <DataTable data={tableData} />
         </div>
-        <div className="right-panel">
-          <ChartSection data={tableData} />
-        </div>
+        {tableData.length !== 0 && (
+          <div
+            className="right-panel"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <ChartSection data={tableData} />
+            <MinutesChartSection data={tableData} />
+          </div>
+        )}
       </div>
     </div>
   );
