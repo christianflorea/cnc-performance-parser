@@ -102,6 +102,9 @@ const App: React.FC = () => {
 
       for (let i = 0; i < json.length; i++) {
         const row = json[i];
+        if (row["User"] === "User") {
+          continue;
+        }
         const cnc_number: number = parseInt(row["User"].match(/\d+/g)[0], 10);
         const isDay: boolean = row["User"].includes("Day");
 
