@@ -16,18 +16,18 @@ h1 {
 
 .content-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: flex-start;
 }
 
 .left-panel {
-  width: 50%;
+  width: 100%;
   padding-right: 20px;
   box-sizing: border-box;
 }
 
 .right-panel {
-  width: 50%;
+  width: 100%;
   box-sizing: border-box;
   display: flex;
   justify-content: center;
